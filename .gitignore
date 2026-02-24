@@ -1,0 +1,18 @@
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+frontend/.env.*
+
+# Backend
+backend/hisab.db
+backend/__pycache__/
+backend/.venv/
+backend/venv/
+backend/env/
+backend/.pytest_cache/
+backend/hisab.db-journal
+
+# General
+.DS_Store
+.vscode/

@@ -104,8 +104,8 @@ body {
 
 @media (max-width: 600px) {
   .notifications-dropdown {
-    width: 310px;
-    right: -20px;
+    width: 300px;
+    right: 0;
   }
 }
 
@@ -213,22 +213,22 @@ body {
 .nav-text {
   display: none;
   white-space: nowrap;
-  animation: slideTextIn 0.3s ease forwards;
+  animation: navFadeIn 0.3s ease forwards;
 }
 
 .bottom-nav-icon {
   stroke-width: 2.5px;
 }
 
-@keyframes slideTextIn {
+@keyframes navFadeIn {
   from {
     opacity: 0;
-    width: 0;
+    transform: translateY(5px);
   }
 
   to {
     opacity: 1;
-    width: auto;
+    transform: translateY(0);
   }
 }
 
@@ -1043,18 +1043,46 @@ main {
   flex-direction: column;
   gap: 10px;
 }
+
 .custom-toast {
   background: rgba(139, 92, 246, 0.9);
   color: white;
   padding: 12px 24px;
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(10px);
   font-weight: 500;
   animation: slideInUp 0.3s ease-out, fadeOut 0.3s ease-in 3.7s forwards;
 }
-.custom-toast.error { background: rgba(239, 68, 68, 0.9); border-left: 4px solid #b91c1c; }
-.custom-toast.success { background: rgba(16, 185, 129, 0.9); border-left: 4px solid #047857; }
 
-@keyframes slideInUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-@keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+.custom-toast.error {
+  background: rgba(239, 68, 68, 0.9);
+  border-left: 4px solid #b91c1c;
+}
+
+.custom-toast.success {
+  background: rgba(16, 185, 129, 0.9);
+  border-left: 4px solid #047857;
+}
+
+@keyframes slideInUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}

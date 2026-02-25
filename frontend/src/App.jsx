@@ -3,8 +3,11 @@ import { Home, Receipt, Utensils, Wallet, Users, User, Landmark, Archive, Bell }
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts'
 import './index.css'
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "https://vara-bhagabhagi-api.onrender.com";
-
+// Dynamic API URL for Localhost vs Production
+const API_BASE_URL = import.meta.env.VITE_API_URL ||
+  (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+    ? "http://localhost:8000"
+    : "https://vara-bhagabhagi-api.onrender.com");
 const ManagerMealBulkForm = ({ users, myGroup, existingMeals, onMealAdded, onShowToast }) => {
   const getDefaultDate = () => new Date().toISOString().split('T')[0];
 
@@ -246,6 +249,11 @@ function App() {
     }
     if (user) {
       fetchNotifications(user.id);
+      // Auto-poll notifications every 10 seconds to solve "user can't got notification properly"
+      const intervalId = setInterval(() => {
+        fetchNotifications(user.id);
+      }, 10000);
+      return () => clearInterval(intervalId);
     }
   }, [user, currentView]);
 

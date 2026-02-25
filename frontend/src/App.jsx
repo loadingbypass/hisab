@@ -1417,8 +1417,8 @@ function App() {
           <thead>
             <tr>
               <th>Name</th>
-              <th>Ami Pai (BDT)</th>
-              <th>Se Pay (BDT)</th>
+              <th>Ami Pai</th>
+              <th>Se Pay</th>
               <th>Net Status</th>
               <th>Actions</th>
             </tr>

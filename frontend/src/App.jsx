@@ -879,8 +879,13 @@ function App() {
   };
 
   const renderAuth = () => (
-    <div className="auth-container">
-      <div className="glass auth-card">
+    <div className="auth-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+        <img src="/logo.png" alt="Mess Management Logo" style={{ width: '80px', height: '80px', borderRadius: '16px', marginBottom: '1rem', boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.37)' }} />
+        <h1 style={{ color: 'var(--text-main)', fontSize: '2.5rem', fontWeight: 800, margin: 0 }}>Mess Management</h1>
+        <p style={{ color: 'var(--text-muted)', marginTop: '0.5rem' }}>The smart way to manage your mess expenses and meals</p>
+      </div>
+      <div className="glass auth-card" style={{ width: '100%' }}>
         <div className="auth-tabs">
           <button className={`auth-tab ${authMode === 'login' ? 'active' : ''}`} onClick={() => { setAuthMode('login'); setErrorMsg(''); }}>Login</button>
           <button className={`auth-tab ${authMode === 'signup' ? 'active' : ''}`} onClick={() => { setAuthMode('signup'); setErrorMsg(''); }}>Sign Up</button>

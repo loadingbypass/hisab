@@ -884,67 +884,77 @@ function App() {
       display: 'flex', flexDirection: 'column',
       background: 'linear-gradient(135deg, #7b1231, #210411)',
       position: 'fixed', top: 0, left: 0, width: '100vw', minHeight: '100vh',
-      zIndex: 9999, fontFamily: 'sans-serif'
+      zIndex: 9999, fontFamily: 'sans-serif',
+      alignItems: 'center', justifyContent: 'center'
     }}>
-      {/* Top Header Section */}
-      <div style={{ padding: '3rem 2rem 2rem 2rem', flexShrink: 0, marginTop: '2rem' }}>
-        <h1 style={{ color: 'white', fontSize: '2.4rem', fontWeight: 700, margin: 0, lineHeight: 1.2 }}>
-          {authMode === 'login' ? (
-            <>Hello<br />Sign in!</>
-          ) : (
-            <>Create Your<br />Account</>
-          )}
-        </h1>
-      </div>
-
-      {/* Bottom White Card Section */}
       <div style={{
-        background: 'white', borderTopLeftRadius: '35px', borderTopRightRadius: '35px',
-        padding: '2.5rem 2rem 3rem 2rem', flex: 1, display: 'flex', flexDirection: 'column',
-        boxShadow: '0 -10px 40px rgba(0,0,0,0.2)'
+        width: '100%', maxWidth: '450px', height: '100vh',
+        display: 'flex', flexDirection: 'column', position: 'relative'
       }}>
+        {/* Top Header Section */}
+        <div style={{ padding: '3rem 2rem 2rem 2rem', flexShrink: 0, marginTop: '2rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', justifyContent: 'center', marginBottom: '2rem' }}>
+            <img src="/logo.png" alt="Logo" style={{ width: '40px', height: '40px', borderRadius: '8px' }} />
+            <span style={{ color: 'white', fontSize: '1.2rem', fontWeight: 600, letterSpacing: '1px' }}>Mess Management</span>
+          </div>
+          <h1 style={{ color: 'white', fontSize: '2.4rem', fontWeight: 700, margin: 0, lineHeight: 1.2 }}>
+            {authMode === 'login' ? (
+              <>Hello<br />Sign in!</>
+            ) : (
+              <>Create Your<br />Account</>
+            )}
+          </h1>
+        </div>
 
-        {errorMsg && <div style={{ color: '#ef4444', fontSize: '0.9rem', marginBottom: '1rem', fontWeight: 500 }}>{errorMsg}</div>}
+        {/* Bottom White Card Section */}
+        <div style={{
+          background: 'white', borderTopLeftRadius: '35px', borderTopRightRadius: '35px',
+          padding: '2.5rem 2rem 3rem 2rem', flex: 1, display: 'flex', flexDirection: 'column',
+          boxShadow: '0 -10px 40px rgba(0,0,0,0.2)'
+        }}>
 
-        <form onSubmit={handleAuthSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.8rem', flex: 1 }}>
+          {errorMsg && <div style={{ color: '#ef4444', fontSize: '0.9rem', marginBottom: '1rem', fontWeight: 500 }}>{errorMsg}</div>}
 
-          {authMode === 'signup' && (
+          <form onSubmit={handleAuthSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.8rem', flex: 1 }}>
+
+            {authMode === 'signup' && (
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <label style={{ color: '#7b1231', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.2rem' }}>Username</label>
+                <input type="text" placeholder="e.g. ahsan123" style={{ width: '100%', padding: '0.5rem 0', border: 'none', borderBottom: '1px solid #d1d5db', background: 'transparent', color: '#1f2937', fontSize: '1rem', outline: 'none' }} value={authForm.username} onChange={e => setAuthForm({ ...authForm, username: e.target.value })} required />
+              </div>
+            )}
+
             <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <label style={{ color: '#7b1231', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.2rem' }}>Username</label>
-              <input type="text" placeholder="e.g. ahsan123" style={{ width: '100%', padding: '0.5rem 0', border: 'none', borderBottom: '1px solid #d1d5db', background: 'transparent', color: '#1f2937', fontSize: '1rem', outline: 'none' }} value={authForm.username} onChange={e => setAuthForm({ ...authForm, username: e.target.value })} required />
+              <label style={{ color: '#7b1231', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.2rem' }}>Email</label>
+              <input type="email" placeholder="user@gmail.com" style={{ width: '100%', padding: '0.5rem 0', border: 'none', borderBottom: '1px solid #d1d5db', background: 'transparent', color: '#1f2937', fontSize: '1rem', outline: 'none' }} value={authForm.email} onChange={e => setAuthForm({ ...authForm, email: e.target.value })} required />
             </div>
-          )}
 
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <label style={{ color: '#7b1231', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.2rem' }}>Email</label>
-            <input type="email" placeholder="user@gmail.com" style={{ width: '100%', padding: '0.5rem 0', border: 'none', borderBottom: '1px solid #d1d5db', background: 'transparent', color: '#1f2937', fontSize: '1rem', outline: 'none' }} value={authForm.email} onChange={e => setAuthForm({ ...authForm, email: e.target.value })} required />
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <label style={{ color: '#7b1231', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.2rem' }}>Password</label>
-            <input type="password" placeholder="••••••••" style={{ width: '100%', padding: '0.5rem 0', border: 'none', borderBottom: '1px solid #d1d5db', background: 'transparent', color: '#1f2937', fontSize: '1rem', outline: 'none' }} value={authForm.password} onChange={e => setAuthForm({ ...authForm, password: e.target.value })} required />
-          </div>
-
-          <div style={{ flex: 1 }}></div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.5rem', marginTop: '2rem' }}>
-            <button type="submit" style={{
-              width: '100%', padding: '1.1rem', background: 'linear-gradient(90deg, #9b1031, #21020f)',
-              color: 'white', border: 'none', borderRadius: '30px', fontSize: '1.1rem', fontWeight: 600,
-              cursor: 'pointer', boxShadow: '0 8px 20px rgba(123, 18, 49, 0.3)', letterSpacing: '1px', transition: 'transform 0.2s'
-            }}>
-              {authMode === 'login' ? 'SIGN IN' : 'SIGN UP'}
-            </button>
-
-            <div style={{ fontSize: '0.9rem', color: '#6b7280' }}>
-              {authMode === 'login' ? "Don't have an account? " : "Already have an account? "}
-              <span onClick={() => { setAuthMode(authMode === 'login' ? 'signup' : 'login'); setErrorMsg(''); }} style={{ color: '#111827', fontWeight: 700, cursor: 'pointer' }}>
-                {authMode === 'login' ? 'Sign up' : 'Sign in'}
-              </span>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <label style={{ color: '#7b1231', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.2rem' }}>Password</label>
+              <input type="password" placeholder="••••••••" style={{ width: '100%', padding: '0.5rem 0', border: 'none', borderBottom: '1px solid #d1d5db', background: 'transparent', color: '#1f2937', fontSize: '1rem', outline: 'none' }} value={authForm.password} onChange={e => setAuthForm({ ...authForm, password: e.target.value })} required />
             </div>
-          </div>
 
-        </form>
+            <div style={{ flex: 1 }}></div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.5rem', marginTop: '2rem' }}>
+              <button type="submit" style={{
+                width: '100%', padding: '1.1rem', background: 'linear-gradient(90deg, #9b1031, #21020f)',
+                color: 'white', border: 'none', borderRadius: '30px', fontSize: '1.1rem', fontWeight: 600,
+                cursor: 'pointer', boxShadow: '0 8px 20px rgba(123, 18, 49, 0.3)', letterSpacing: '1px', transition: 'transform 0.2s'
+              }}>
+                {authMode === 'login' ? 'SIGN IN' : 'SIGN UP'}
+              </button>
+
+              <div style={{ fontSize: '0.9rem', color: '#6b7280' }}>
+                {authMode === 'login' ? "Don't have an account? " : "Already have an account? "}
+                <span onClick={() => { setAuthMode(authMode === 'login' ? 'signup' : 'login'); setErrorMsg(''); }} style={{ color: '#111827', fontWeight: 700, cursor: 'pointer' }}>
+                  {authMode === 'login' ? 'Sign up' : 'Sign in'}
+                </span>
+              </div>
+            </div>
+
+          </form>
+        </div>
       </div>
     </div>
   );

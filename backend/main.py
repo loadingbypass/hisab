@@ -530,7 +530,6 @@ def add_meal(group_id: str, meal: MealCreate, db: Session = Depends(get_db)):
         date=meal.date, breakfast=meal.breakfast, lunch=meal.lunch, dinner=meal.dinner, guest_meal_count=meal.guest_meal_count
     )
     db.add(new_meal)
-    db.add(new_meal)
     db.commit()
     return {"message": "Meal added successfully"}
 

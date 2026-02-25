@@ -428,6 +428,7 @@ main {
   font-weight: 800;
   background: linear-gradient(135deg, var(--primary), var(--secondary));
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
   margin-bottom: 0.5rem;
 }
@@ -764,9 +765,9 @@ main {
   /* Compact Tables */
   .members-table th,
   .members-table td {
-    padding: 0.5rem 0.2rem;
-    font-size: 0.8rem;
-    word-break: break-word;
+    padding: 0.8rem 0.5rem;
+    font-size: 0.85rem;
+    white-space: nowrap;
   }
 
   .glass-input {
@@ -876,6 +877,7 @@ main {
 .members-table td {
   padding: 1rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  white-space: nowrap;
 }
 
 .members-table th {

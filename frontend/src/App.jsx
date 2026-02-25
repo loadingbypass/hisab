@@ -110,6 +110,7 @@ const ManagerMealBulkForm = ({ users, myGroup, existingMeals, onMealAdded, onSho
 function App() {
   const [currentView, setCurrentView] = useState('login');
   const [authMode, setAuthMode] = useState('login');
+  const [authFocus, setAuthFocus] = useState('none');
   const [user, setUser] = useState(null);
 
   // Group & Dashboard States
@@ -880,8 +881,16 @@ function App() {
 
   const renderAuth = () => (
     <div className="auth-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-      <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-        <img src="/logo.png" alt="Mess Management Logo" style={{ width: '80px', height: '80px', borderRadius: '16px', marginBottom: '1rem', boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.37)' }} />
+      <div style={{ textAlign: 'center', marginBottom: '2rem', height: '140px' }}>
+        <div style={{ height: '80px', marginBottom: '1rem', display: 'flex', justifyContent: 'center', alignItems: 'flex-end', transition: 'all 0.3s ease' }}>
+          {authFocus === 'password' ? (
+            <div style={{ fontSize: '4.5rem', lineHeight: 1, animation: 'slideInUp 0.3s ease' }}>🙈</div>
+          ) : authFocus !== 'none' ? (
+            <div style={{ fontSize: '4.5rem', lineHeight: 1, animation: 'slideInUp 0.3s ease' }}>🐵</div>
+          ) : (
+            <img src="/logo.png" alt="Mess Management Logo" style={{ width: '80px', height: '80px', borderRadius: '16px', boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.37)' }} />
+          )}
+        </div>
         <h1 style={{ color: 'var(--text-main)', fontSize: '2.5rem', fontWeight: 800, margin: 0 }}>Mess Management</h1>
         <p style={{ color: 'var(--text-muted)', marginTop: '0.5rem' }}>The smart way to manage your mess expenses and meals</p>
       </div>
@@ -897,10 +906,10 @@ function App() {
 
         <form onSubmit={handleAuthSubmit} className="auth-form">
           {authMode === 'signup' && (
-            <input type="text" placeholder="Unique Username (e.g. ahsan123)" className="glass-input" value={authForm.username} onChange={e => setAuthForm({ ...authForm, username: e.target.value })} required />
+            <input type="text" placeholder="Unique Username (e.g. ahsan123)" className="glass-input" value={authForm.username} onChange={e => setAuthForm({ ...authForm, username: e.target.value })} onFocus={() => setAuthFocus('text')} onBlur={() => setAuthFocus('none')} required />
           )}
-          <input type="email" placeholder="Email Address" className="glass-input" value={authForm.email} onChange={e => setAuthForm({ ...authForm, email: e.target.value })} required />
-          <input type="password" placeholder="Password" className="glass-input" value={authForm.password} onChange={e => setAuthForm({ ...authForm, password: e.target.value })} required />
+          <input type="email" placeholder="Email Address" className="glass-input" value={authForm.email} onChange={e => setAuthForm({ ...authForm, email: e.target.value })} onFocus={() => setAuthFocus('text')} onBlur={() => setAuthFocus('none')} required />
+          <input type="password" placeholder="Password" className="glass-input" value={authForm.password} onChange={e => setAuthForm({ ...authForm, password: e.target.value })} onFocus={() => setAuthFocus('password')} onBlur={() => setAuthFocus('none')} required />
           <button type="submit" className="btn-primary mt-2">{authMode === 'login' ? 'Log In' : 'Sign Up'}</button>
         </form>
       </div>

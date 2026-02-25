@@ -5,66 +5,105 @@ import './index.css'
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "https://vara-bhagabhagi-api.onrender.com";
 
-const MemberMealRow = ({ member, myGroup, existingMeals, onMealAdded, onShowToast }) => {
-  const [form, setForm] = useState({
-    date: new Date().toISOString().split('T')[0],
-    breakfast: '',
-    lunch: '',
-    dinner: '',
-    guest_meal: ''
+const ManagerMealBulkForm = ({ users, myGroup, existingMeals, onMealAdded, onShowToast }) => {
+  const getDefaultDate = () => new Date().toISOString().split('T')[0];
+
+  const [forms, setForms] = useState(() => {
+    const initial = {};
+    users.forEach(u => {
+      initial[u.user_id] = { date: getDefaultDate(), breakfast: '', lunch: '', dinner: '', guest_meal: '' };
+    });
+    return initial;
   });
 
-  const handleSubmit = async (e) => {
+  const handleInputChange = (userId, field, value) => {
+    setForms(prev => ({
+      ...prev,
+      [userId]: { ...prev[userId], [field]: value }
+    }));
+  };
+
+  const handleSaveAll = async (e) => {
     e.preventDefault();
-    const alreadyExists = existingMeals.some(m => m.user_id === member.user_id && m.date === form.date);
-    if (alreadyExists) {
-      onShowToast(`Meals for ${member.name} on ${form.date} already logged! Please edit the existing entry below.`, 'error');
-      return;
+
+    // Gather valid entries
+    const toSave = [];
+    for (const u of users) {
+      const f = forms[u.user_id];
+      if (f.breakfast || f.lunch || f.dinner || f.guest_meal) {
+
+        const alreadyExists = existingMeals.some(m => m.user_id === u.user_id && m.date === f.date);
+        if (alreadyExists) {
+          onShowToast(`Meals for ${u.name} on ${f.date} already logged! Ignoring this row.`, 'error');
+          continue;
+        }
+
+        toSave.push({
+          group_id: myGroup.id,
+          user_id: u.user_id,
+          date: f.date,
+          breakfast: parseFloat(f.breakfast) || 0,
+          lunch: parseFloat(f.lunch) || 0,
+          dinner: parseFloat(f.dinner) || 0,
+          guest_meal_count: parseFloat(f.guest_meal) || 0
+        });
+      }
     }
 
-    // Check if everything is empty
-    if (!form.breakfast && !form.lunch && !form.dinner && !form.guest_meal) {
-      onShowToast("Please enter at least one meal value.", 'error');
+    if (toSave.length === 0) {
+      onShowToast("No new valid meals to save.", "error");
       return;
     }
 
     try {
-      const res = await fetch(`${API_BASE_URL}/api/groups/${myGroup.id}/meals`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          group_id: myGroup.id,
-          user_id: member.user_id,
-          date: form.date,
-          breakfast: parseFloat(form.breakfast) || 0,
-          lunch: parseFloat(form.lunch) || 0,
-          dinner: parseFloat(form.dinner) || 0,
-          guest_meal_count: parseFloat(form.guest_meal) || 0
-        })
-      });
-      if (res.ok) {
-        setForm({ ...form, breakfast: '', lunch: '', dinner: '', guest_meal: '' });
-        onMealAdded();
-        onShowToast(`Meals saved for ${member.name}`, 'success');
-      } else {
-        const errData = await res.json();
-        onShowToast('Error: ' + (typeof errData.detail === 'object' ? JSON.stringify(errData.detail) : errData.detail), 'error');
+      let successCount = 0;
+      for (const meal of toSave) {
+        const res = await fetch(`${API_BASE_URL}/api/groups/${myGroup.id}/meals`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(meal)
+        });
+        if (res.ok) successCount++;
       }
+
+      if (successCount > 0) {
+        onShowToast(`Successfully saved ${successCount} member meals!`, 'success');
+        onMealAdded();
+
+        // Reset only the ones we saved
+        setForms(prev => {
+          const next = { ...prev };
+          toSave.forEach(s => {
+            next[s.user_id] = { ...next[s.user_id], breakfast: '', lunch: '', dinner: '', guest_meal: '' };
+          });
+          return next;
+        });
+      }
+
     } catch (err) {
       console.error(err);
+      onShowToast("Error saving some meals.", "error");
     }
   };
 
   return (
-    <form className="glass mb-3" style={{ display: 'flex', flexWrap: 'wrap', gap: '0.8rem', padding: '1rem', alignItems: 'center', marginBottom: '1rem', borderLeft: '4px solid var(--primary)' }} onSubmit={handleSubmit}>
-      <div style={{ flex: '1 1 120px', fontWeight: 'bold', color: 'var(--text-main)', fontSize: '1.05rem' }}>👤 {member.name}</div>
-      <input type="date" className="glass-input" style={{ flex: '1 1 140px', padding: '0.6rem' }} value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} required />
-      <input type="number" placeholder="B.fast" className="glass-input" style={{ flex: '1 1 80px', padding: '0.6rem' }} step="0.5" min="0" value={form.breakfast} onChange={e => setForm({ ...form, breakfast: e.target.value })} />
-      <input type="number" placeholder="Lunch" className="glass-input" style={{ flex: '1 1 80px', padding: '0.6rem' }} step="0.5" min="0" value={form.lunch} onChange={e => setForm({ ...form, lunch: e.target.value })} />
-      <input type="number" placeholder="Dinner" className="glass-input" style={{ flex: '1 1 80px', padding: '0.6rem' }} step="0.5" min="0" value={form.dinner} onChange={e => setForm({ ...form, dinner: e.target.value })} />
-      <input type="number" placeholder="Guest" className="glass-input" style={{ flex: '1 1 80px', padding: '0.6rem' }} step="0.5" min="0" value={form.guest_meal} onChange={e => setForm({ ...form, guest_meal: e.target.value })} />
-      <button type="submit" className="btn-primary" style={{ flex: '1 1 100px', padding: '0.6rem' }}>Save</button>
-    </form>
+    <div className="glass mb-4" style={{ padding: '1.5rem', borderLeft: '4px solid var(--primary)', textAlign: 'left' }}>
+      <h3 style={{ margin: 0, marginBottom: '1.5rem', color: 'var(--text-main)' }}>Add Member Meals</h3>
+
+      <form onSubmit={handleSaveAll}>
+        {users.map(u => (
+          <div key={u.user_id} style={{ display: 'flex', flexWrap: 'wrap', gap: '0.8rem', alignItems: 'center', marginBottom: '0.8rem', paddingBottom: '0.8rem', borderBottom: '1px solid var(--glass-border)' }}>
+            <div style={{ flex: '1 1 120px', fontWeight: 'bold', color: 'var(--text-main)', fontSize: '0.95rem' }}>👤 {u.name}</div>
+            <input type="date" className="glass-input" style={{ flex: '1 1 140px', padding: '0.5rem' }} value={forms[u.user_id].date} onChange={e => handleInputChange(u.user_id, 'date', e.target.value)} required />
+            <input type="number" placeholder="B.fast" className="glass-input" style={{ flex: '1 1 70px', padding: '0.5rem' }} step="0.5" min="0" value={forms[u.user_id].breakfast} onChange={e => handleInputChange(u.user_id, 'breakfast', e.target.value)} />
+            <input type="number" placeholder="Lunch" className="glass-input" style={{ flex: '1 1 70px', padding: '0.5rem' }} step="0.5" min="0" value={forms[u.user_id].lunch} onChange={e => handleInputChange(u.user_id, 'lunch', e.target.value)} />
+            <input type="number" placeholder="Dinner" className="glass-input" style={{ flex: '1 1 70px', padding: '0.5rem' }} step="0.5" min="0" value={forms[u.user_id].dinner} onChange={e => handleInputChange(u.user_id, 'dinner', e.target.value)} />
+            <input type="number" placeholder="Guest" className="glass-input" style={{ flex: '1 1 70px', padding: '0.5rem' }} step="0.5" min="0" value={forms[u.user_id].guest_meal} onChange={e => handleInputChange(u.user_id, 'guest_meal', e.target.value)} />
+          </div>
+        ))}
+        <button type="submit" className="btn-primary" style={{ width: '100%', padding: '0.8rem', marginTop: '1rem', fontSize: '1rem' }}>Save All Meals</button>
+      </form>
+    </div>
   );
 };
 
@@ -1375,12 +1414,7 @@ function App() {
         <p style={{ marginBottom: '1.5rem', color: 'var(--text-muted)' }}>{isManager ? 'Input daily meals for your mess members.' : 'View meal histories.'}</p>
 
         {isManager ? (
-          <div className="manager-meal-forms">
-            <h3 style={{ marginBottom: '1rem', color: 'var(--text-main)', textAlign: 'left' }}>Add Member Meals</h3>
-            {data.users.map(u => (
-              <MemberMealRow key={u.user_id} member={u} myGroup={myGroup} existingMeals={data.meals} onMealAdded={fetchDashboard} onShowToast={showToast} />
-            ))}
-          </div>
+          <ManagerMealBulkForm users={data.users} myGroup={myGroup} existingMeals={data.meals} onMealAdded={fetchDashboard} onShowToast={showToast} />
         ) : (
           <div className="glass group-action-card mb-4" style={{ textAlign: 'left', padding: '1rem', borderLeft: '4px solid var(--secondary)' }}>
             <p style={{ margin: 0, color: 'var(--text-main)', fontSize: '0.9rem' }}>Only the group manager can log meals. If you spot an error in your meal history below, please report it to <strong>{managerName}</strong>.</p>

@@ -1,6 +1,6 @@
 {
-    "short_name": "VaraBhagabhagi",
-    "name": "Vara Bhagabhagi Manager",
+    "short_name": "MessManagement",
+    "name": "Mess Management App",
     "icons": [
         {
             "src": "/logo.png",

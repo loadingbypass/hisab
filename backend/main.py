@@ -132,7 +132,7 @@ def get_db():
         db.close()
 
 # ----- APP INITIALIZATION -----
-app = FastAPI(title="Vara Bhagabhagi Persistent API")
+app = FastAPI(title="Mess Management API")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],

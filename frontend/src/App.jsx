@@ -583,7 +583,7 @@ function App() {
       <nav className="topbar glass">
         <div className="nav-brand" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <img src="/logo.png" alt="logo" style={{ width: '30px', height: '30px', borderRadius: '8px' }} />
-          Vara Bhagabhagi
+          Mess Management
         </div>
         <div className="nav-right">
           {userGroups.length > 0 && (
@@ -886,7 +886,7 @@ function App() {
           <button className={`auth-tab ${authMode === 'signup' ? 'active' : ''}`} onClick={() => { setAuthMode('signup'); setErrorMsg(''); }}>Sign Up</button>
         </div>
         <h2>{authMode === 'login' ? 'Welcome Back' : 'Create Account'}</h2>
-        <p>{authMode === 'login' ? 'Login to your personal dashboard' : 'Join Vara Bhagabhagi today'}</p>
+        <p>{authMode === 'login' ? 'Login to your personal dashboard' : 'Join Mess Management today'}</p>
 
         {errorMsg && <div className="error-banner">{errorMsg}</div>}
 

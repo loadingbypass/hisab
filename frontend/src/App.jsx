@@ -3,7 +3,68 @@ import { Home, Receipt, Utensils, Wallet, Users, User, Landmark, Archive, Bell }
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts'
 import './index.css'
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "${API_BASE_URL}";
+const API_BASE_URL = import.meta.env.VITE_API_URL || "https://vara-bhagabhagi-api.onrender.com";
+
+const MemberMealRow = ({ member, myGroup, existingMeals, onMealAdded }) => {
+  const [form, setForm] = useState({
+    date: new Date().toISOString().split('T')[0],
+    breakfast: '',
+    lunch: '',
+    dinner: '',
+    guest_meal: ''
+  });
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const alreadyExists = existingMeals.some(m => m.user_id === member.user_id && m.date === form.date);
+    if (alreadyExists) {
+      alert(`Meals for ${member.name} on ${form.date} already logged! Please edit the existing entry below.`);
+      return;
+    }
+
+    // Check if everything is empty
+    if (!form.breakfast && !form.lunch && !form.dinner && !form.guest_meal) {
+      alert("Please enter at least one meal value.");
+      return;
+    }
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/groups/${myGroup.id}/meals`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_id: member.user_id,
+          date: form.date,
+          breakfast: parseFloat(form.breakfast) || 0,
+          lunch: parseFloat(form.lunch) || 0,
+          dinner: parseFloat(form.dinner) || 0,
+          guest_meal_count: parseFloat(form.guest_meal) || 0
+        })
+      });
+      if (res.ok) {
+        setForm({ ...form, breakfast: '', lunch: '', dinner: '', guest_meal: '' });
+        onMealAdded();
+      } else {
+        const errData = await res.json();
+        alert('Error: ' + errData.detail);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  return (
+    <form className="glass mb-3" style={{ display: 'flex', flexWrap: 'wrap', gap: '0.8rem', padding: '1rem', alignItems: 'center', marginBottom: '1rem', borderLeft: '4px solid var(--primary)' }} onSubmit={handleSubmit}>
+      <div style={{ flex: '1 1 120px', fontWeight: 'bold', color: 'var(--text-main)', fontSize: '1.05rem' }}>👤 {member.name}</div>
+      <input type="date" className="glass-input" style={{ flex: '1 1 140px', padding: '0.6rem' }} value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} required />
+      <input type="number" placeholder="B.fast" className="glass-input" style={{ flex: '1 1 80px', padding: '0.6rem' }} step="0.5" min="0" value={form.breakfast} onChange={e => setForm({ ...form, breakfast: e.target.value })} />
+      <input type="number" placeholder="Lunch" className="glass-input" style={{ flex: '1 1 80px', padding: '0.6rem' }} step="0.5" min="0" value={form.lunch} onChange={e => setForm({ ...form, lunch: e.target.value })} />
+      <input type="number" placeholder="Dinner" className="glass-input" style={{ flex: '1 1 80px', padding: '0.6rem' }} step="0.5" min="0" value={form.dinner} onChange={e => setForm({ ...form, dinner: e.target.value })} />
+      <input type="number" placeholder="Guest" className="glass-input" style={{ flex: '1 1 80px', padding: '0.6rem' }} step="0.5" min="0" value={form.guest_meal} onChange={e => setForm({ ...form, guest_meal: e.target.value })} />
+      <button type="submit" className="btn-primary" style={{ flex: '1 1 100px', padding: '0.6rem' }}>Save</button>
+    </form>
+  );
+};
 
 function App() {
   const [currentView, setCurrentView] = useState('login');
@@ -1278,18 +1339,12 @@ function App() {
         <p style={{ marginBottom: '1.5rem', color: 'var(--text-muted)' }}>{isManager ? 'Input daily meals for your mess members.' : 'View meal histories.'}</p>
 
         {isManager ? (
-          <form className="expense-form glass mb-4" onSubmit={handleAddMeal} style={{ display: 'flex', flexWrap: 'wrap' }}>
-            <select className="glass-input" style={{ flex: '1 1 100%' }} value={mealForm.user_id} onChange={e => setMealForm({ ...mealForm, user_id: e.target.value })} required>
-              <option value="">-- Select Member --</option>
-              {data.users.map(u => <option key={u.user_id} value={u.user_id}>{u.name}</option>)}
-            </select>
-            <input type="date" className="glass-input" style={{ flex: '1 1 100%' }} value={mealForm.date} onChange={e => setMealForm({ ...mealForm, date: e.target.value })} required />
-            <input type="number" placeholder="Breakfast (e.g. 1)" className="glass-input" step="0.5" min="0" value={mealForm.breakfast} onChange={e => setMealForm({ ...mealForm, breakfast: e.target.value })} />
-            <input type="number" placeholder="Lunch (e.g. 1)" className="glass-input" step="0.5" min="0" value={mealForm.lunch} onChange={e => setMealForm({ ...mealForm, lunch: e.target.value })} />
-            <input type="number" placeholder="Dinner (e.g. 1)" className="glass-input" step="0.5" min="0" value={mealForm.dinner} onChange={e => setMealForm({ ...mealForm, dinner: e.target.value })} />
-            <input type="number" placeholder="Guest Meals" className="glass-input" step="0.5" min="0" value={mealForm.guest_meal} onChange={e => setMealForm({ ...mealForm, guest_meal: e.target.value })} />
-            <button type="submit" className="btn-primary" style={{ flex: '1 1 100%', marginTop: '0.5rem' }}>Log Meals</button>
-          </form>
+          <div className="manager-meal-forms">
+            <h3 style={{ marginBottom: '1rem', color: 'var(--text-main)', textAlign: 'left' }}>Add Member Meals</h3>
+            {data.users.map(u => (
+              <MemberMealRow key={u.user_id} member={u} myGroup={myGroup} existingMeals={data.meals} onMealAdded={fetchDashboard} />
+            ))}
+          </div>
         ) : (
           <div className="glass group-action-card mb-4" style={{ textAlign: 'left', padding: '1rem', borderLeft: '4px solid var(--secondary)' }}>
             <p style={{ margin: 0, color: 'var(--text-main)', fontSize: '0.9rem' }}>Only the group manager can log meals. If you spot an error in your meal history below, please report it to <strong>{managerName}</strong>.</p>

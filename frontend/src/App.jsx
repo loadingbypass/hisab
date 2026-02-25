@@ -33,6 +33,7 @@ const MemberMealRow = ({ member, myGroup, existingMeals, onMealAdded }) => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          group_id: myGroup.id,
           user_id: member.user_id,
           date: form.date,
           breakfast: parseFloat(form.breakfast) || 0,
@@ -46,7 +47,7 @@ const MemberMealRow = ({ member, myGroup, existingMeals, onMealAdded }) => {
         onMealAdded();
       } else {
         const errData = await res.json();
-        alert('Error: ' + errData.detail);
+        alert('Error: ' + (typeof errData.detail === 'object' ? JSON.stringify(errData.detail) : errData.detail));
       }
     } catch (err) {
       console.error(err);

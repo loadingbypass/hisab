@@ -881,43 +881,70 @@ function App() {
 
   const renderAuth = () => (
     <div style={{
-      display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center',
-      background: '#dbe4e9', position: 'fixed', top: 0, left: 0, width: '100vw', minHeight: '100vh',
+      display: 'flex', flexDirection: 'column',
+      background: 'linear-gradient(135deg, #7b1231, #210411)',
+      position: 'fixed', top: 0, left: 0, width: '100vw', minHeight: '100vh',
       zIndex: 9999, fontFamily: 'sans-serif'
     }}>
-      <div style={{ textAlign: 'center', marginBottom: '2rem', marginTop: '-5rem' }}>
-        <div style={{ background: 'white', borderRadius: '50%', width: '60px', height: '60px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem auto', boxShadow: '0 4px 10px rgba(0,0,0,0.05)' }}>
-          <img src="/logo.png" alt="Logo" style={{ width: '35px', height: '35px', borderRadius: '8px' }} />
-        </div>
-        <h1 style={{ color: '#4b5563', fontSize: '1.4rem', fontWeight: 600, margin: 0, lineHeight: '1.4' }}>Mess Management<br />Animated Login</h1>
+      {/* Top Header Section */}
+      <div style={{ padding: '3rem 2rem 2rem 2rem', flexShrink: 0, marginTop: '2rem' }}>
+        <h1 style={{ color: 'white', fontSize: '2.4rem', fontWeight: 700, margin: 0, lineHeight: 1.2 }}>
+          {authMode === 'login' ? (
+            <>Hello<br />Sign in!</>
+          ) : (
+            <>Create Your<br />Account</>
+          )}
+        </h1>
       </div>
 
-      <div style={{ width: '100%', maxWidth: '340px', position: 'relative', marginTop: '4rem' }}>
-        <div style={{
-          position: 'absolute', top: '-85px', left: '50%', transform: 'translateX(-50%)',
-          fontSize: '7rem', lineHeight: 1, zIndex: 10, transition: 'all 0.3s ease'
-        }}>
-          {authFocus === 'password' ? '🙈' : (authFocus === 'text' ? '🐵' : '🐻')}
-        </div>
+      {/* Bottom White Card Section */}
+      <div style={{
+        background: 'white', borderTopLeftRadius: '35px', borderTopRightRadius: '35px',
+        padding: '2.5rem 2rem 3rem 2rem', flex: 1, display: 'flex', flexDirection: 'column',
+        boxShadow: '0 -10px 40px rgba(0,0,0,0.2)'
+      }}>
 
-        <div style={{ background: 'white', borderRadius: '16px', padding: '1.5rem', boxShadow: '0 10px 40px rgba(0,0,0,0.08)', position: 'relative', zIndex: 11 }}>
-          <form onSubmit={handleAuthSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
-            <div style={{ display: 'flex', background: '#f1f5f9', borderRadius: '10px', padding: '0.3rem', marginBottom: '0.5rem' }}>
-              <button type="button" onClick={() => { setAuthMode('login'); setErrorMsg(''); }} style={{ flex: 1, padding: '0.6rem', border: 'none', borderRadius: '8px', background: authMode === 'login' ? 'white' : 'transparent', color: authMode === 'login' ? '#1e293b' : '#94a3b8', fontWeight: 600, cursor: 'pointer', boxShadow: authMode === 'login' ? '0 2px 5px rgba(0,0,0,0.05)' : 'none', transition: 'all 0.2s' }}>Login</button>
-              <button type="button" onClick={() => { setAuthMode('signup'); setErrorMsg(''); }} style={{ flex: 1, padding: '0.6rem', border: 'none', borderRadius: '8px', background: authMode === 'signup' ? 'white' : 'transparent', color: authMode === 'signup' ? '#1e293b' : '#94a3b8', fontWeight: 600, cursor: 'pointer', boxShadow: authMode === 'signup' ? '0 2px 5px rgba(0,0,0,0.05)' : 'none', transition: 'all 0.2s' }}>Sign Up</button>
+        {errorMsg && <div style={{ color: '#ef4444', fontSize: '0.9rem', marginBottom: '1rem', fontWeight: 500 }}>{errorMsg}</div>}
+
+        <form onSubmit={handleAuthSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.8rem', flex: 1 }}>
+
+          {authMode === 'signup' && (
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <label style={{ color: '#7b1231', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.2rem' }}>Username</label>
+              <input type="text" placeholder="e.g. ahsan123" style={{ width: '100%', padding: '0.5rem 0', border: 'none', borderBottom: '1px solid #d1d5db', background: 'transparent', color: '#1f2937', fontSize: '1rem', outline: 'none' }} value={authForm.username} onChange={e => setAuthForm({ ...authForm, username: e.target.value })} required />
             </div>
+          )}
 
-            {errorMsg && <div style={{ color: '#ef4444', fontSize: '0.85rem', textAlign: 'center', marginBottom: '0.5rem', fontWeight: 600 }}>{errorMsg}</div>}
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <label style={{ color: '#7b1231', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.2rem' }}>Email</label>
+            <input type="email" placeholder="user@gmail.com" style={{ width: '100%', padding: '0.5rem 0', border: 'none', borderBottom: '1px solid #d1d5db', background: 'transparent', color: '#1f2937', fontSize: '1rem', outline: 'none' }} value={authForm.email} onChange={e => setAuthForm({ ...authForm, email: e.target.value })} required />
+          </div>
 
-            {authMode === 'signup' && (
-              <input type="text" placeholder="Username" style={{ width: '100%', padding: '1rem', background: '#f1f5f9', border: 'none', borderRadius: '8px', color: '#1e293b', fontSize: '0.95rem', outline: 'none', fontWeight: 500 }} value={authForm.username} onChange={e => setAuthForm({ ...authForm, username: e.target.value })} onFocus={() => setAuthFocus('text')} onBlur={() => setAuthFocus('none')} required />
-            )}
-            <input type="email" placeholder="Email" style={{ width: '100%', padding: '1rem', background: '#f1f5f9', border: 'none', borderRadius: '8px', color: '#1e293b', fontSize: '0.95rem', outline: 'none', fontWeight: 500 }} value={authForm.email} onChange={e => setAuthForm({ ...authForm, email: e.target.value })} onFocus={() => setAuthFocus('text')} onBlur={() => setAuthFocus('none')} required />
-            <input type="password" placeholder="Password" style={{ width: '100%', padding: '1rem', background: '#f1f5f9', border: 'none', borderRadius: '8px', color: '#1e293b', fontSize: '0.95rem', outline: 'none', fontWeight: 500 }} value={authForm.password} onChange={e => setAuthForm({ ...authForm, password: e.target.value })} onFocus={() => setAuthFocus('password')} onBlur={() => setAuthFocus('none')} required />
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <label style={{ color: '#7b1231', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.2rem' }}>Password</label>
+            <input type="password" placeholder="••••••••" style={{ width: '100%', padding: '0.5rem 0', border: 'none', borderBottom: '1px solid #d1d5db', background: 'transparent', color: '#1f2937', fontSize: '1rem', outline: 'none' }} value={authForm.password} onChange={e => setAuthForm({ ...authForm, password: e.target.value })} required />
+          </div>
 
-            <button type="submit" style={{ width: '100%', padding: '1rem', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '8px', fontSize: '1.05rem', fontWeight: 600, marginTop: '1rem', cursor: 'pointer', transition: 'background 0.2s' }}>{authMode === 'login' ? 'Login' : 'Sign Up'}</button>
-          </form>
-        </div>
+          <div style={{ flex: 1 }}></div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.5rem', marginTop: '2rem' }}>
+            <button type="submit" style={{
+              width: '100%', padding: '1.1rem', background: 'linear-gradient(90deg, #9b1031, #21020f)',
+              color: 'white', border: 'none', borderRadius: '30px', fontSize: '1.1rem', fontWeight: 600,
+              cursor: 'pointer', boxShadow: '0 8px 20px rgba(123, 18, 49, 0.3)', letterSpacing: '1px', transition: 'transform 0.2s'
+            }}>
+              {authMode === 'login' ? 'SIGN IN' : 'SIGN UP'}
+            </button>
+
+            <div style={{ fontSize: '0.9rem', color: '#6b7280' }}>
+              {authMode === 'login' ? "Don't have an account? " : "Already have an account? "}
+              <span onClick={() => { setAuthMode(authMode === 'login' ? 'signup' : 'login'); setErrorMsg(''); }} style={{ color: '#111827', fontWeight: 700, cursor: 'pointer' }}>
+                {authMode === 'login' ? 'Sign up' : 'Sign in'}
+              </span>
+            </div>
+          </div>
+
+        </form>
       </div>
     </div>
   );

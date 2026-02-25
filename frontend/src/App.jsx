@@ -5,7 +5,7 @@ import './index.css'
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "https://vara-bhagabhagi-api.onrender.com";
 
-const MemberMealRow = ({ member, myGroup, existingMeals, onMealAdded }) => {
+const MemberMealRow = ({ member, myGroup, existingMeals, onMealAdded, onShowToast }) => {
   const [form, setForm] = useState({
     date: new Date().toISOString().split('T')[0],
     breakfast: '',
@@ -18,13 +18,13 @@ const MemberMealRow = ({ member, myGroup, existingMeals, onMealAdded }) => {
     e.preventDefault();
     const alreadyExists = existingMeals.some(m => m.user_id === member.user_id && m.date === form.date);
     if (alreadyExists) {
-      alert(`Meals for ${member.name} on ${form.date} already logged! Please edit the existing entry below.`);
+      onShowToast(`Meals for ${member.name} on ${form.date} already logged! Please edit the existing entry below.`, 'error');
       return;
     }
 
     // Check if everything is empty
     if (!form.breakfast && !form.lunch && !form.dinner && !form.guest_meal) {
-      alert("Please enter at least one meal value.");
+      onShowToast("Please enter at least one meal value.", 'error');
       return;
     }
 
@@ -45,9 +45,10 @@ const MemberMealRow = ({ member, myGroup, existingMeals, onMealAdded }) => {
       if (res.ok) {
         setForm({ ...form, breakfast: '', lunch: '', dinner: '', guest_meal: '' });
         onMealAdded();
+        onShowToast(`Meals saved for ${member.name}`, 'success');
       } else {
         const errData = await res.json();
-        alert('Error: ' + (typeof errData.detail === 'object' ? JSON.stringify(errData.detail) : errData.detail));
+        onShowToast('Error: ' + (typeof errData.detail === 'object' ? JSON.stringify(errData.detail) : errData.detail), 'error');
       }
     } catch (err) {
       console.error(err);
@@ -78,6 +79,26 @@ function App() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+
+  // Toast System
+  const [toast, setToast] = useState({ show: false, message: '', type: 'info' });
+  const showToast = (message, type = 'info') => {
+    setToast({ show: true, message, type });
+    setTimeout(() => setToast({ show: false, message: '', type: 'info' }), 4000);
+  };
+
+  // Local Storage Auth Restoration
+  useEffect(() => {
+    const storedUser = localStorage.getItem('hisab_user');
+    const storedGroup = localStorage.getItem('hisab_group');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+      setCurrentView('dashboard');
+    }
+    if (storedGroup) {
+      setMyGroup(JSON.parse(storedGroup));
+    }
+  }, []);
 
   // Forms
   const [authForm, setAuthForm] = useState({ username: '', email: '', password: '' });
@@ -212,6 +233,7 @@ function App() {
       if (!res.ok) throw new Error(result.detail || 'Authentication failed');
 
       setUser(result);
+      localStorage.setItem('hisab_user', JSON.stringify(result));
       setCurrentView('dashboard');
     } catch (err) {
       setErrorMsg(err.message);
@@ -232,6 +254,7 @@ function App() {
 
       setUserGroups([...userGroups, result]);
       setMyGroup(result);
+      localStorage.setItem('hisab_group', JSON.stringify(result));
       setNewGroupName({ unique_name: '', display_name: '', group_type: 'smart_meal' });
       setCurrentView('dashboard');
     } catch (err) {
@@ -249,7 +272,7 @@ function App() {
         body: JSON.stringify({ ...mealRequestForm, group_id: myGroup.id, user_id: user.id })
       });
       if (res.ok) {
-        alert("Meal request sent!");
+        showToast("Meal request sent!", 'success');
         setMealRequestForm({ date: new Date().toISOString().split('T')[0], message: '' });
         fetchMealRequests();
       }
@@ -285,6 +308,7 @@ function App() {
 
       setUserGroups([...userGroups, result]);
       setMyGroup(result);
+      localStorage.setItem('hisab_group', JSON.stringify(result));
       setJoinGroupUsername('');
       setCurrentView('dashboard');
     } catch (err) {
@@ -508,7 +532,7 @@ function App() {
   const handleSendReminder = async (debtorId) => {
     try {
       const res = await fetch(`${API_BASE_URL}/api/groups/${myGroup.id}/remind/${debtorId}`, { method: 'POST' });
-      if (res.ok) alert("Reminder sent successfully!");
+      if (res.ok) showToast("Reminder sent successfully!", 'success');
     } catch (err) {
       console.error("Error sending reminder:", err);
     }
@@ -524,7 +548,11 @@ function App() {
         </div>
         <div className="nav-right">
           {userGroups.length > 0 && (
-            <select className="glass-select group-selector" value={myGroup?.id || ''} onChange={(e) => setMyGroup(userGroups.find(g => g.id === e.target.value))}>
+            <select className="glass-select group-selector" value={myGroup?.id || ''} onChange={(e) => {
+              const selected = userGroups.find(g => g.id === e.target.value);
+              setMyGroup(selected);
+              if (selected) localStorage.setItem('hisab_group', JSON.stringify(selected));
+            }}>
               {userGroups.map(g => <option key={g.id} value={g.id}>{g.display_name}</option>)}
             </select>
           )}
@@ -550,7 +578,14 @@ function App() {
             )}
           </div>
 
-          <button className="nav-btn logout" onClick={() => { setUser(null); setMyGroup(null); setUserGroups([]); setCurrentView('login'); }}>Logout</button>
+          <button className="nav-btn logout" onClick={() => {
+            setUser(null);
+            setMyGroup(null);
+            setUserGroups([]);
+            localStorage.removeItem('hisab_user');
+            localStorage.removeItem('hisab_group');
+            setCurrentView('login');
+          }}>Logout</button>
         </div>
       </nav>
     );
@@ -1343,7 +1378,7 @@ function App() {
           <div className="manager-meal-forms">
             <h3 style={{ marginBottom: '1rem', color: 'var(--text-main)', textAlign: 'left' }}>Add Member Meals</h3>
             {data.users.map(u => (
-              <MemberMealRow key={u.user_id} member={u} myGroup={myGroup} existingMeals={data.meals} onMealAdded={fetchDashboard} />
+              <MemberMealRow key={u.user_id} member={u} myGroup={myGroup} existingMeals={data.meals} onMealAdded={fetchDashboard} onShowToast={showToast} />
             ))}
           </div>
         ) : (
@@ -1563,6 +1598,13 @@ function App() {
       </main>
       <footer className="footer"><p>Made with ❤️ for Bangladesh Bachelors</p></footer>
       {user && renderBottomNav()}
+      {toast.show && (
+        <div className="custom-toast-container">
+          <div className={`custom-toast ${toast.type}`}>
+            {toast.message}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

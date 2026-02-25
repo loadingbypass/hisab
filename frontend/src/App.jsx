@@ -892,7 +892,7 @@ function App() {
         boxShadow: '0 20px 50px rgba(0,0,0,0.5)', overflow: 'hidden', padding: '3rem 2rem'
       }}>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '3rem', marginTop: '1rem' }}>
-          <img src="/logo.png" alt="Logo" style={{ width: '50px', height: '50px', borderRadius: '12px', marginBottom: '1rem' }} />
+          <img src="./logo.png" alt="Logo" style={{ width: '50px', height: '50px', borderRadius: '12px', marginBottom: '1rem' }} />
           <h2 style={{ color: 'white', margin: 0, fontSize: '1.8rem', fontWeight: 700, letterSpacing: '0.5px' }}>Mess Management</h2>
         </div>
 

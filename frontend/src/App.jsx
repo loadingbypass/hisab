@@ -1443,14 +1443,14 @@ function App() {
                     </>
                   )}
                   <td><span className="role-badge" style={{ color: netColor }}>{netStr}</span></td>
-                  <td style={{ display: 'flex', gap: '0.2rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+                  <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>
                     {editingCashId === c.id ? (
-                      <>
-                        <button className="btn-success" style={{ padding: '0.4rem 0.6rem', fontSize: '0.75rem', flex: '1 1 auto' }} onClick={() => handleUpdateCash(c.id)}>Save</button>
-                        <button className="btn-danger" style={{ padding: '0.4rem 0.6rem', fontSize: '0.75rem', flex: '1 1 auto' }} onClick={() => setEditingCashId(null)}>Cancel</button>
-                      </>
+                      <div>
+                        <button className="btn-success" style={{ padding: '0.2rem 0.4rem', fontSize: '0.75rem', marginBottom: '0.2rem', width: '100%' }} onClick={() => handleUpdateCash(c.id)}>Save</button>
+                        <button className="btn-danger" style={{ padding: '0.2rem 0.4rem', fontSize: '0.75rem', width: '100%' }} onClick={() => setEditingCashId(null)}>Cancel</button>
+                      </div>
                     ) : (
-                      <button className="btn-secondary" style={{ padding: '0.4rem 0.6rem', fontSize: '0.75rem', width: '100%' }} onClick={() => { setEditingCashId(c.id); setEditCashForm({ ami_pai: c.ami_pai, se_pay: c.se_pay }); }}>✏️ Edit</button>
+                      <button className="btn-secondary" style={{ padding: '0.2rem 0.4rem', fontSize: '0.75rem', width: '100%' }} onClick={() => { setEditingCashId(c.id); setEditCashForm({ ami_pai: c.ami_pai, se_pay: c.se_pay }); }}>✏️ Edit</button>
                     )}
                   </td>
                 </tr>

@@ -1670,22 +1670,36 @@ function App() {
     );
   };
 
+  if (!user) {
+    return (
+      <>
+        {renderAuth()}
+        {toast.show && (
+          <div className="custom-toast-container">
+            <div className={`custom-toast ${toast.type}`}>
+              {toast.message}
+            </div>
+          </div>
+        )}
+      </>
+    );
+  }
+
   return (
     <div className="app-container">
-      {user && renderTopBar()}
+      {renderTopBar()}
       <main>
-        {!user && renderAuth()}
-        {user && currentView === 'dashboard' && renderDashboard()}
-        {user && currentView === 'expenses' && renderExpenses()}
-        {user && currentView === 'funds' && renderFunds()}
-        {user && currentView === 'meals' && renderSmartMeals()}
-        {user && currentView === 'personal-cash' && renderPersonalCash()}
-        {user && currentView === 'manage-groups' && renderManageGroups()}
-        {user && currentView === 'archive' && renderArchive()}
-        {user && currentView === 'profile' && renderProfile()}
+        {currentView === 'dashboard' && renderDashboard()}
+        {currentView === 'expenses' && renderExpenses()}
+        {currentView === 'funds' && renderFunds()}
+        {currentView === 'meals' && renderSmartMeals()}
+        {currentView === 'personal-cash' && renderPersonalCash()}
+        {currentView === 'manage-groups' && renderManageGroups()}
+        {currentView === 'archive' && renderArchive()}
+        {currentView === 'profile' && renderProfile()}
       </main>
       <footer className="footer"><p>Made with ❤️ for Bangladesh Bachelors</p></footer>
-      {user && renderBottomNav()}
+      {renderBottomNav()}
       {toast.show && (
         <div className="custom-toast-container">
           <div className={`custom-toast ${toast.type}`}>

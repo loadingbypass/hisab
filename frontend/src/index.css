@@ -28,18 +28,19 @@ body {
     radial-gradient(circle at 85% 30%, rgba(236, 72, 153, 0.15), transparent 25%);
   color: var(--text-main);
   min-height: 100vh;
-  display: flex;
-  justify-content: center;
+  overflow-x: hidden;
 }
 
 .app-container {
   width: 100%;
   max-width: 900px;
+  margin: 0 auto;
   padding: 2rem 1rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
   animation: fadeIn 0.8s ease-out;
+  overflow-x: hidden;
 }
 
 /* Glassmorphism Classes */

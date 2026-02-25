@@ -9,7 +9,10 @@ from sqlalchemy.orm import declarative_base, sessionmaker, relationship, Session
 import os
 
 # ----- DATABASE SETUP -----
-DATABASE_URL = os.environ.get("DATABASE_URL", "sqlite:///./hisab.db")
+DATABASE_URL = os.environ.get("DATABASE_URL", "").strip()
+if not DATABASE_URL:
+    DATABASE_URL = "sqlite:///./hisab.db"
+
 if DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 

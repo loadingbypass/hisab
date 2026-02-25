@@ -1402,11 +1402,13 @@ function App() {
 
       <div className="glass group-action-card mt-4" style={{ textAlign: 'left', padding: '1.5rem' }}>
         <h3 style={{ marginBottom: '1rem', color: 'var(--text-main)' }}>Add Cash Record</h3>
-        <form className="auth-form" onSubmit={handleAddCash} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-          <input type="text" placeholder="Name (e.g. Karim)" className="glass-input" style={{ gridColumn: 'span 2' }} value={cashForm.name} onChange={e => setCashForm({ ...cashForm, name: e.target.value })} required />
-          <input type="number" placeholder="Ami Pai (I get)" className="glass-input" value={cashForm.ami_pai} onChange={e => setCashForm({ ...cashForm, ami_pai: e.target.value })} />
-          <input type="number" placeholder="Se Pay (He gets)" className="glass-input" value={cashForm.se_pay} onChange={e => setCashForm({ ...cashForm, se_pay: e.target.value })} />
-          <button type="submit" className="btn-primary" style={{ gridColumn: 'span 2' }}>Save Cash Record</button>
+        <form className="auth-form" onSubmit={handleAddCash}>
+          <input type="text" placeholder="Name (e.g. Karim)" className="glass-input" value={cashForm.name} onChange={e => setCashForm({ ...cashForm, name: e.target.value })} required />
+          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+            <input type="number" placeholder="Ami Pai (I get)" className="glass-input" style={{ flex: '1 1 120px' }} value={cashForm.ami_pai} onChange={e => setCashForm({ ...cashForm, ami_pai: e.target.value })} />
+            <input type="number" placeholder="Se Pay (He gets)" className="glass-input" style={{ flex: '1 1 120px' }} value={cashForm.se_pay} onChange={e => setCashForm({ ...cashForm, se_pay: e.target.value })} />
+          </div>
+          <button type="submit" className="btn-primary" style={{ width: '100%' }}>Save Cash Record</button>
         </form>
       </div>
 

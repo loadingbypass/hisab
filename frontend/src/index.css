@@ -721,6 +721,18 @@ main {
 }
 
 @media (max-width: 600px) {
+  .app-container {
+    padding: 1rem 0.5rem !important;
+  }
+
+  .page-container {
+    padding: 1rem 0.5rem !important;
+  }
+
+  .group-action-card {
+    padding: 1.5rem 0.5rem !important;
+  }
+
   .stats-grid {
     grid-template-columns: 1fr;
   }
@@ -733,7 +745,7 @@ main {
   .topbar {
     flex-direction: column;
     gap: 1rem;
-    padding: 1rem;
+    padding: 1rem 0.5rem !important;
   }
 
   .bottom-nav {

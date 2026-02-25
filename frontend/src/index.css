@@ -763,11 +763,32 @@ main {
   }
 
   /* Compact Tables */
+  .table-responsive {
+    overflow-x: hidden !important;
+    width: 100%;
+  }
+
+  .members-table {
+    width: 100%;
+    table-layout: fixed;
+  }
+
   .members-table th,
   .members-table td {
-    padding: 0.8rem 0.5rem;
-    font-size: 0.85rem;
+    padding: 0.4rem 0.1rem;
+    font-size: min(2.8vw, 0.8rem);
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
+  }
+
+  .members-table button,
+  .members-table input {
+    font-size: min(2.5vw, 0.75rem) !important;
+    padding: 0.3rem !important;
+    width: 100% !important;
+    min-width: 0;
   }
 
   .glass-input {

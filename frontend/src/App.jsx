@@ -456,7 +456,10 @@ function App() {
     const unreadCount = notifications.filter(n => !n.is_read).length;
     return (
       <nav className="topbar glass">
-        <div className="nav-brand">🍱 Vara Bhagabhagi</div>
+        <div className="nav-brand" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <img src="/logo.png" alt="logo" style={{ width: '30px', height: '30px', borderRadius: '8px' }} />
+          Vara Bhagabhagi
+        </div>
         <div className="nav-right">
           {userGroups.length > 0 && (
             <select className="glass-select group-selector" value={myGroup?.id || ''} onChange={(e) => setMyGroup(userGroups.find(g => g.id === e.target.value))}>

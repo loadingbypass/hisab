@@ -880,38 +880,44 @@ function App() {
   };
 
   const renderAuth = () => (
-    <div className="auth-container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-      <div style={{ textAlign: 'center', marginBottom: '2rem', height: '140px' }}>
-        <div style={{ height: '80px', marginBottom: '1rem', display: 'flex', justifyContent: 'center', alignItems: 'flex-end', transition: 'all 0.3s ease' }}>
-          {authFocus === 'password' ? (
-            <div style={{ fontSize: '4.5rem', lineHeight: 1, animation: 'slideInUp 0.3s ease' }}>🙈</div>
-          ) : authFocus !== 'none' ? (
-            <div style={{ fontSize: '4.5rem', lineHeight: 1, animation: 'slideInUp 0.3s ease' }}>🐵</div>
-          ) : (
-            <img src="/logo.png" alt="Mess Management Logo" style={{ width: '80px', height: '80px', borderRadius: '16px', boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.37)' }} />
-          )}
+    <div style={{
+      display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center',
+      background: '#dbe4e9', position: 'fixed', top: 0, left: 0, width: '100vw', minHeight: '100vh',
+      zIndex: 9999, fontFamily: 'sans-serif'
+    }}>
+      <div style={{ textAlign: 'center', marginBottom: '2rem', marginTop: '-5rem' }}>
+        <div style={{ background: 'white', borderRadius: '50%', width: '60px', height: '60px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem auto', boxShadow: '0 4px 10px rgba(0,0,0,0.05)' }}>
+          <img src="/logo.png" alt="Logo" style={{ width: '35px', height: '35px', borderRadius: '8px' }} />
         </div>
-        <h1 style={{ color: 'var(--text-main)', fontSize: '2.5rem', fontWeight: 800, margin: 0 }}>Mess Management</h1>
-        <p style={{ color: 'var(--text-muted)', marginTop: '0.5rem' }}>The smart way to manage your mess expenses and meals</p>
+        <h1 style={{ color: '#4b5563', fontSize: '1.4rem', fontWeight: 600, margin: 0, lineHeight: '1.4' }}>Mess Management<br />Animated Login</h1>
       </div>
-      <div className="glass auth-card" style={{ width: '100%' }}>
-        <div className="auth-tabs">
-          <button className={`auth-tab ${authMode === 'login' ? 'active' : ''}`} onClick={() => { setAuthMode('login'); setErrorMsg(''); }}>Login</button>
-          <button className={`auth-tab ${authMode === 'signup' ? 'active' : ''}`} onClick={() => { setAuthMode('signup'); setErrorMsg(''); }}>Sign Up</button>
+
+      <div style={{ width: '100%', maxWidth: '340px', position: 'relative', marginTop: '4rem' }}>
+        <div style={{
+          position: 'absolute', top: '-85px', left: '50%', transform: 'translateX(-50%)',
+          fontSize: '7rem', lineHeight: 1, zIndex: 10, transition: 'all 0.3s ease'
+        }}>
+          {authFocus === 'password' ? '🙈' : (authFocus === 'text' ? '🐵' : '🐻')}
         </div>
-        <h2>{authMode === 'login' ? 'Welcome Back' : 'Create Account'}</h2>
-        <p>{authMode === 'login' ? 'Login to your personal dashboard' : 'Join Mess Management today'}</p>
 
-        {errorMsg && <div className="error-banner">{errorMsg}</div>}
+        <div style={{ background: 'white', borderRadius: '16px', padding: '1.5rem', boxShadow: '0 10px 40px rgba(0,0,0,0.08)', position: 'relative', zIndex: 11 }}>
+          <form onSubmit={handleAuthSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+            <div style={{ display: 'flex', background: '#f1f5f9', borderRadius: '10px', padding: '0.3rem', marginBottom: '0.5rem' }}>
+              <button type="button" onClick={() => { setAuthMode('login'); setErrorMsg(''); }} style={{ flex: 1, padding: '0.6rem', border: 'none', borderRadius: '8px', background: authMode === 'login' ? 'white' : 'transparent', color: authMode === 'login' ? '#1e293b' : '#94a3b8', fontWeight: 600, cursor: 'pointer', boxShadow: authMode === 'login' ? '0 2px 5px rgba(0,0,0,0.05)' : 'none', transition: 'all 0.2s' }}>Login</button>
+              <button type="button" onClick={() => { setAuthMode('signup'); setErrorMsg(''); }} style={{ flex: 1, padding: '0.6rem', border: 'none', borderRadius: '8px', background: authMode === 'signup' ? 'white' : 'transparent', color: authMode === 'signup' ? '#1e293b' : '#94a3b8', fontWeight: 600, cursor: 'pointer', boxShadow: authMode === 'signup' ? '0 2px 5px rgba(0,0,0,0.05)' : 'none', transition: 'all 0.2s' }}>Sign Up</button>
+            </div>
 
-        <form onSubmit={handleAuthSubmit} className="auth-form">
-          {authMode === 'signup' && (
-            <input type="text" placeholder="Unique Username (e.g. ahsan123)" className="glass-input" value={authForm.username} onChange={e => setAuthForm({ ...authForm, username: e.target.value })} onFocus={() => setAuthFocus('text')} onBlur={() => setAuthFocus('none')} required />
-          )}
-          <input type="email" placeholder="Email Address" className="glass-input" value={authForm.email} onChange={e => setAuthForm({ ...authForm, email: e.target.value })} onFocus={() => setAuthFocus('text')} onBlur={() => setAuthFocus('none')} required />
-          <input type="password" placeholder="Password" className="glass-input" value={authForm.password} onChange={e => setAuthForm({ ...authForm, password: e.target.value })} onFocus={() => setAuthFocus('password')} onBlur={() => setAuthFocus('none')} required />
-          <button type="submit" className="btn-primary mt-2">{authMode === 'login' ? 'Log In' : 'Sign Up'}</button>
-        </form>
+            {errorMsg && <div style={{ color: '#ef4444', fontSize: '0.85rem', textAlign: 'center', marginBottom: '0.5rem', fontWeight: 600 }}>{errorMsg}</div>}
+
+            {authMode === 'signup' && (
+              <input type="text" placeholder="Username" style={{ width: '100%', padding: '1rem', background: '#f1f5f9', border: 'none', borderRadius: '8px', color: '#1e293b', fontSize: '0.95rem', outline: 'none', fontWeight: 500 }} value={authForm.username} onChange={e => setAuthForm({ ...authForm, username: e.target.value })} onFocus={() => setAuthFocus('text')} onBlur={() => setAuthFocus('none')} required />
+            )}
+            <input type="email" placeholder="Email" style={{ width: '100%', padding: '1rem', background: '#f1f5f9', border: 'none', borderRadius: '8px', color: '#1e293b', fontSize: '0.95rem', outline: 'none', fontWeight: 500 }} value={authForm.email} onChange={e => setAuthForm({ ...authForm, email: e.target.value })} onFocus={() => setAuthFocus('text')} onBlur={() => setAuthFocus('none')} required />
+            <input type="password" placeholder="Password" style={{ width: '100%', padding: '1rem', background: '#f1f5f9', border: 'none', borderRadius: '8px', color: '#1e293b', fontSize: '0.95rem', outline: 'none', fontWeight: 500 }} value={authForm.password} onChange={e => setAuthForm({ ...authForm, password: e.target.value })} onFocus={() => setAuthFocus('password')} onBlur={() => setAuthFocus('none')} required />
+
+            <button type="submit" style={{ width: '100%', padding: '1rem', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '8px', fontSize: '1.05rem', fontWeight: 600, marginTop: '1rem', cursor: 'pointer', transition: 'background 0.2s' }}>{authMode === 'login' ? 'Login' : 'Sign Up'}</button>
+          </form>
+        </div>
       </div>
     </div>
   );
